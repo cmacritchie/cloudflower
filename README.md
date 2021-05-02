@@ -41,7 +41,6 @@ Install the dependencies and devDependencies and start the webpack de server.
 cd electron-client
 npm i
 npm run dev
-node app
 ```
 An electron app should open as well as a browser version.
 
