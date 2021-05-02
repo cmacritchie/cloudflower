@@ -1,0 +1,73 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  demoserverless
+
+  Sample SAM Template for demoserverless
+  
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+    Environment:
+      Variables:
+        TABLE_NAME: botanyData
+
+Resources:
+  myDB:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: botanyData
+      PrimaryKey:
+        Name: id
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+  LambdaFlowerWrite:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: functionWrite/
+      Handler: write.lambdaHandler
+      Runtime: nodejs12.x
+      Events:
+        FlowerWrite:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /flower
+            Method: post
+      Policies:
+        DynamoDBWritePolicy:
+          TableName: !Ref myDB
+
+  LambdaFlowerRead:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: functionRead/
+      Handler: read.lambdaHandler
+      Runtime: nodejs12.x
+      Events:
+        FlowerRead:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /flowers
+            Method: get
+      Policies:
+        DynamoDBWritePolicy:
+          TableName: !Ref myDB
+
+  LambdaFlowerDelete:
+      Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+      Properties:
+        CodeUri: functionDelete/
+        Handler: delete.lambdaHandler
+        Runtime: nodejs12.x
+        Events:
+          FlowerDelete:
+            Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+            Properties:
+              Path: /flower/{id}
+              Method: delete
+        Policies:
+          DynamoDBWritePolicy:
+            TableName: !Ref myDB

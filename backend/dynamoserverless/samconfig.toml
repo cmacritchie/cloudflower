@@ -1,0 +1,10 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "demoserverlessdeux"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-md4cjcx0wk4z"
+s3_prefix = "demoserverlessdeux"
